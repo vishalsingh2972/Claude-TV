@@ -1,0 +1,63 @@
+# Mecool KM7 Plus streaming box (product HP4623gb-Mecool, device YDA, board HP46AY4, Amlogic S905Y4),
+# vendor brand Skyworth Digital, model string "4K Google TV Box". No tuner, HDMI output only.
+# Google TV / Android 14 (API 34), firmware UKG3.260128.001.C3.0.11_20260824.
+# Fingerprint: MECOOL/HP4623gb-Mecool/YDA:14/UKG3.260128.001/C3.0.11_20260824:user/release-keys
+# Sold with Android TV 11; this unit had already been updated to Google TV 14.
+#
+# Apply:   TV_HOST=<tv ip> tools/disable.sh examples/mecool-km7plus/debloat.txt
+# Undo:    TV_HOST=<tv ip> tools/restore.sh examples/mecool-km7plus/debloat.txt com.google.android.apps.tv.launcherx
+# Everything is DISABLED, not uninstalled. Comment out any line you want to keep.
+#
+# Stock launcher: com.google.android.apps.tv.launcherx/.home.HomeActivity (pass it to restore, the default is wrong here).
+# Live TV app: none. Set live_tv_package to empty in config.xml.
+# Already disabled at the factory: com.google.android.youtube.tvmusic.
+#
+# Known quirks on this firmware:
+# - HOME: launcherx declares HOME at priority 2 and com.google.android.tungsten.setupwraith/.RecoveryActivity
+#   at priority 1, so set-home-activity reports Success but Home keeps opening the stock launcher.
+#   Disabling only launcherx sends Home to the setupwraith Recovery screen; on our unit ADB then dropped
+#   and the screen went black until the box came back. Shell cannot disable the RecoveryActivity component
+#   on Android 14 (SecurityException). What worked: disable setupwraith FIRST, then launcherx, then
+#   set-home-activity com.gathin.tvhome/.MainActivity. Keep both lines below together.
+# - First `pm install` failed with INSTALL_FAILED_VERIFICATION_FAILURE. Temporarily
+#   `settings put global verifier_verify_adb_installs 0`, install, then
+#   `settings delete global verifier_verify_adb_installs` to restore the default.
+# - dreamx is the active screensaver. Switch first, e.g.
+#   tools/tv.py 'settings put secure screensaver_components com.gathin.tvhome/.ClockDream'
+# - ADB TCP port 5555 came from service.adb.tcp.port (not persist.*), so after a reboot USB debugging
+#   alone may not reopen it; look for a network debugging toggle in Developer options.
+# - Leave alone: com.droidlogic.* (Amlogic HDMI/system), com.dolby.android.audio.service,
+#   com.mft.rcupair (remote pairing), com.sdt.globalkey / com.sdt.vendor (remote keys),
+#   com.google.android.tv.dfuservice (remote firmware, find-my-remote), com.google.android.tv.axel,
+#   com.google.android.tv.remote.service, com.sdt.ota / com.sdt.upgrade (system updates),
+#   com.mft.frontpanelledsservice (front LED), com.oemservice (enabled accessibility service that
+#   detects remote keys), com.oem.qa (has a KeyDefinition screen; purpose unclear, kept and only hidden).
+# - Verified after applying: YouTube launches, Home returns to Claude TV, Gboard stays default IME,
+#   com.oemservice accessibility service stays enabled. Physical remote buttons not tested.
+
+# Needed for Claude TV as Home (see quirks), keep together
+com.google.android.tungsten.setupwraith   # Google TV setup; owns the priority-1 RecoveryActivity HOME
+com.google.android.apps.tv.launcherx      # stock Google TV home
+
+# Google TV content, telemetry and auto-installs
+com.google.android.videos                 # Google TV app / movie store
+com.google.android.play.games
+com.google.android.feedback
+com.android.tv.feedbackconsent
+com.google.android.partnersetup           # RLZ ping
+android.autoinstalls.config.AMLSTBAndroid.device   # Play Auto Installs config
+
+# Factory and unused system apps
+com.sdt.producttest                       # factory production test, handles USB commands
+com.android.printspooler
+com.google.android.syncadapters.calendar
+
+# Screensaver (switch screensaver first, see quirks)
+com.google.android.apps.tv.dreamx         # Ambient / Backdrop screensaver
+
+# Personal choices on this unit: comment out what you use
+com.amazon.amazonvideo.livingroom         # Prime Video
+com.google.android.katniss                # Google Assistant, mic button stops working
+com.google.android.apps.mediashell        # Chromecast built-in
+com.google.android.marvin.talkback        # TalkBack screen reader
+com.amlogic.voicesubtitle                 # Amlogic AI voice subtitles

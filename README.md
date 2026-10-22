@@ -90,6 +90,7 @@ The included community examples record these devices; they are starting points, 
 | TCL 55-inch G10 · 2023 | Google TV / Android 12 | [View](examples/tcl-g10-google-tv/debloat.txt) |
 | SANYO ATV R2 | Android TV 9 | [View](examples/sanyo-atv-r2/debloat.txt) |
 | OnePlus TV D00 · Dubai | Google TV / Android 14 | [View](examples/oneplus-tv-dubai/debloat.txt) |
+| Mecool KM7 Plus · HP4623gb-Mecool | Google TV / Android 14 | [View](examples/mecool-km7plus/debloat.txt) |
 
 **Not supported by this project:** LG webOS, Samsung Tizen and Amazon Fire TV. Other Android TV models need their own package review and device testing. Firmware can restrict HOME replacement, input switching or debugging.
 
@@ -342,7 +343,7 @@ Claude-TV/
 |-- CONTRIBUTING.md            Contribution and validation guide
 |-- LICENSE                    Original MIT notice and font attribution
 |-- docs/                      Original screenshots and comparisons
-|-- examples/                  Five model-specific package lists
+|-- examples/                  Six model-specific package lists
 |-- tools/
 |   |-- tv.py                  ADB TCP shell, batch, push and pull
 |   |-- b64push.py             Base64 upload with MD5 comparison
